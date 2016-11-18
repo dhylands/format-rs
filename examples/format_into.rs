@@ -25,8 +25,8 @@ fn test_int_fill(num: i32, fill: char) {
 
     let num_idx = buf_find(&buf, num_tmpl).unwrap();
 
-    if format_int_into(&mut buf[num_idx .. num_idx + num_tmpl.len()], num, fill) {
-        println!("{}", String::from_utf8_lossy(&buf[0 .. tmpl.len()]));
+    if format_int_into(&mut buf[num_idx..num_idx + num_tmpl.len()], num, fill) {
+        println!("{}", String::from_utf8_lossy(&buf[0..tmpl.len()]));
     } else {
         println!("*** overflow ***");
     }
@@ -47,26 +47,41 @@ fn test_float(num: f64, digits_after_decimal: u32) {
 
     let num_idx = buf_find(&buf, num_tmpl).unwrap();
 
-    if format_float_into(&mut buf[num_idx .. num_idx + num_tmpl.len()], num, digits_after_decimal) {
-        println!("{}", String::from_utf8_lossy(&buf[0 .. tmpl.len()]));
+    if format_float_into(&mut buf[num_idx..num_idx + num_tmpl.len()],
+                         num,
+                         digits_after_decimal) {
+        println!("{}", String::from_utf8_lossy(&buf[0..tmpl.len()]));
     } else {
         println!("*** overflow ***");
     }
 }
 
 fn main() {
-    let test_ints = vec![123456, 12345, 1234, 123, 12, 1, 0,
-                         -1, -12, -123, -1234, -12345, -123456 ];
+    let test_ints = vec![123456, 12345, 1234, 123, 12, 1, 0, -1, -12, -123, -1234, -12345, -123456];
 
     println!("Formatting ints");
     for test_i in test_ints.iter() {
         test_int(*test_i);
     }
 
-    let test_floats = vec![123456.7890, 12345.6789, 1234.5678, 123.4567, 
-                           12.3456, 1.2345, 1.0000, 0.9999, 0.1000, 0.0000,
-                           -0.1000, -0.9999, -1.0000, -1.2345, -12.3456,
-                           -123.4567, -1234.5678, -12345.6789];
+    let test_floats = vec![123456.7890,
+                           12345.6789,
+                           1234.5678,
+                           123.4567,
+                           12.3456,
+                           1.2345,
+                           1.0000,
+                           0.9999,
+                           0.1000,
+                           0.0000,
+                           -0.1000,
+                           -0.9999,
+                           -1.0000,
+                           -1.2345,
+                           -12.3456,
+                           -123.4567,
+                           -1234.5678,
+                           -12345.6789];
 
     println!("Formatting floats");
     for test_f in test_floats.iter() {
