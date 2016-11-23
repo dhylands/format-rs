@@ -4,7 +4,7 @@
 
 extern crate format;
 
-use format::{format_int_into, format_float_into};
+use format::{format_int_into, format_float_into, format_hex_into};
 use std::str;
 
 fn buf_find(buf: &[u8], needle: &str) -> Option<usize> {
@@ -56,6 +56,23 @@ fn test_float(num: f64, digits_after_decimal: u32) {
     }
 }
 
+fn test_hex(num: u32) {
+    let mut buf: [u8; 32] = ['@' as u8; 32];
+
+    let tmpl = b"Num: >xxxxxxxx<";
+    let num_tmpl = "xxxxxxxx";
+
+    buf[0..tmpl.len()].copy_from_slice(tmpl);
+
+    let num_idx = buf_find(&buf, num_tmpl).unwrap();
+
+    if format_hex_into(&mut buf[num_idx..num_idx + num_tmpl.len()], num) {
+        println!("{}", String::from_utf8_lossy(&buf[0..tmpl.len()]));
+    } else {
+        println!("*** overflow ***");
+    }
+}
+
 fn main() {
     let test_ints = vec![123456, 12345, 1234, 123, 12, 1, 0, -1, -12, -123, -1234, -12345, -123456];
 
@@ -86,5 +103,14 @@ fn main() {
     println!("Formatting floats");
     for test_f in test_floats.iter() {
         test_float(*test_f, 2);
+    }
+
+    let test_nums = vec![0x123456,
+                         0x789abc,
+                         0xdef000];
+
+    println!("Formatting hex");
+    for test_num in test_nums.iter() {
+        test_hex(*test_num);
     }
 }

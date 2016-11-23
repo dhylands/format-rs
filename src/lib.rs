@@ -12,6 +12,22 @@ pub fn fill_buf(buf: &mut [u8], fill_byte: u8) {
     }
 }
 
+pub fn format_hex_into(buf: &mut [u8], num: u32) -> bool {
+    if buf.len() < 1 {
+        return false;
+    }
+
+    let digit: &'static [u8; 16] = b"0123456789abcdef";
+    let mut buf_iter = buf.iter_mut().rev();
+    let mut num = num;
+    while let Some(ch) = buf_iter.next() {
+        *ch = digit[(num & 0x0f) as usize];
+        num >>= 4;
+    }
+    return true;
+}
+
+
 pub fn format_int_into(buf: &mut [u8], num: i32, fill: char) -> bool {
     if buf.len() < 1 {
         return false;
@@ -114,7 +130,7 @@ pub fn format_float_into(buf: &mut [u8], num: f64, digits_after_decimal: u32) ->
 #[cfg(test)]
 mod test {
 
-    use ::{format_float_into, format_int_into};
+    use ::{format_float_into, format_int_into, format_hex_into};
 
     fn format_int_into_ref(buf: &mut [u8], num: i32, fill: char) -> bool {
 
@@ -210,6 +226,42 @@ mod test {
             assert_eq!(ok1, ok2);
             if ok1 {
                 assert_eq!(flt_buf, ref_buf);
+            }
+        }
+    }
+
+    fn format_hex_into_ref(buf: &mut [u8], num: u32) -> bool {
+
+        let s = format!("{:01$x}", num, buf.len());
+        let s_len = s.len();
+        let buf_len = buf.len();
+
+        // The width parameter is a minimum, but our buffer is constrained.
+        // So we copy the rightmost buf_len characters.
+        if s_len > buf_len {
+            false
+        } else {
+            buf.copy_from_slice(&(s.into_bytes())[0..buf_len]);
+            true
+        }
+    }
+
+    #[test]
+    fn test_hex() {
+        let test_nums = vec![0x123456,
+                             0x789abc,
+                             0xdef000];
+        
+        let mut hex_buf: [u8; 8] = [0; 8];
+        let mut ref_buf: [u8; 8] = [0; 8];
+
+        for num in test_nums.iter() {
+            let ok1 = format_hex_into(&mut hex_buf[..], *num);
+            let ok2 = format_hex_into_ref(&mut ref_buf[..], *num);
+
+            assert_eq!(ok1, ok2);
+            if ok1 {
+                assert_eq!(hex_buf, ref_buf);
             }
         }
     }
