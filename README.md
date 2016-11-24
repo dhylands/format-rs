@@ -12,3 +12,5 @@ For floating point, it requires an additional 1.5K (over the 650 bytes of base).
 
 These routines format into an already allocated buffer which allows for reduced
 heap usage.
+
+[![Build Status](https://travis-ci.org/dhylands/format-rs.svg?branch=master)](https://travis-ci.org/dhylands/format-rs)
